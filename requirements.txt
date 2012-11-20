@@ -1,0 +1,11 @@
+# requires libevent1-dev
+
+cython
+-e git+http://github.com/kivy/pyjnius#egg=jnius
+beautifulsoup4
+gevent  
+-e git+https://github.com/john-kurkowski/tldextract#egg=tldextract
+-e git+https://github.com/srlindsay/gevent-profiler#egg=python-gevent-profiler
+lxml
+
+http://labix.org/download/python-dateutil/python-dateutil-1.5.tar.gz#egg=dateutil
