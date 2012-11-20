@@ -1,6 +1,6 @@
-# requires libevent1-dev
 
-cython
+# apt-get install libevent1-dev, python-virtualenv, python2.7-dev, openjdk-7-jdk, libxslt1-dev
+
 -e git+http://github.com/kivy/pyjnius#egg=jnius
 beautifulsoup4
 gevent  
@@ -9,3 +9,5 @@ gevent
 lxml
 
 http://labix.org/download/python-dateutil/python-dateutil-1.5.tar.gz#egg=dateutil
+ipython
+ipdb
