@@ -1,0 +1,5 @@
+*~
+*.pyc
+spider/my-stats.txt
+spider/my-summary.txt
+spider/my-trace.txt
