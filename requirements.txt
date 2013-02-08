@@ -1,13 +1,22 @@
-
 # apt-get install libevent1-dev, python-virtualenv, python2.7-dev, openjdk-7-jdk, libxslt1-dev
+
+django
+gunicorn
 
 -e git+http://github.com/kivy/pyjnius#egg=jnius
 beautifulsoup4
 gevent  
 -e git+https://github.com/john-kurkowski/tldextract#egg=tldextract
 -e git+https://github.com/srlindsay/gevent-profiler#egg=python-gevent-profiler
-lxml
+gevent-psycopg2
+gevent-socketio
 
+lxml
 http://labix.org/download/python-dateutil/python-dateutil-1.5.tar.gz#egg=dateutil
+
+#-e git+https://github.com/AirSage/Petrel.git#egg=petrel
+-e git+https://github.com/Timewire/Petrel.git#egg=petrel
+
+# dev
 ipython
 ipdb
