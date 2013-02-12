@@ -1,0 +1,90 @@
+body {
+    background-color: #FFFAF1;
+    margin:0px;
+}
+.timeline {
+    position: fixed;
+    background-color: #f6f6f6;
+    left: 3%;
+    width:94%;
+    top: 50%;
+    height: 20px;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: #aeaeae;
+    border-top-style: solid;
+    border-top-width: 1px;
+    border-top-color: #aeaeae;
+}
+.zoom {
+    background-image: url('/assets/smaller_round_zoom.png');
+    background-repeat: no-repeat;
+    position: absolute;
+    height: 40px;
+    width: 40px;
+    left: 5px;
+    top: 5px;
+    position:relative;
+}
+.zoom_button {
+    cursor: pointer;
+    width: 40px;
+    height: 50px;
+    position:absolute;
+    left: 5px;
+    z-index: -100;
+    transition: all 1s ease;
+    opacity: 0;
+}
+.zoom_in {
+   top: -40px; 
+   background-image: url('/assets/zoom_in.png');
+   background-repeat: no-repeat;
+}
+.zoom_out {
+   top: 40px;
+   background-image: url('/assets/zoom_out.png');
+   background-repeat: no-repeat;
+}
+.markers {
+    background-image: url('/assets/timeline_marker.png');
+    width:100%;
+    height: 9px;
+    position: absolute;
+}
+.marker {
+    background-image: url('/assets/timeline_marker.png');
+    width:1px;
+    height: 9px;
+    position: absolute;
+    background: repeat-y: 
+}
+.markers-top {
+    top: -9px;   
+}
+.markers-bottom {
+    bottom: -9px;
+}
+
+.round_end_left {
+    background-repeat: no-repeat;
+    background-image: url('/assets/round_start.png');
+    position: absolute;
+    top: -15px;
+    left: -25px;
+    width: 50px;
+    height: 50px;
+}
+.round_end_right {
+    background-repeat: no-repeat;
+    background-image: url('/assets/round_end.png');
+    position: absolute;
+    top: -15px;
+    right: -25px;
+    width: 50px;
+    height: 50px;
+}
+.ui-show {
+    opacity: 1;
+    transition: all 1s ease; // You should probably browser-prefix this
+}

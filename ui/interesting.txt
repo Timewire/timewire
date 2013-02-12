@@ -1,0 +1,23 @@
+angular.js
+hammer.js 
+w3c pointer spec http://www.w3.org/TR/2013/WD-pointerevents-20130115/
+http://jgestures.codeplex.com/
+
+socket.io
+scss
+coffeescript
+
+knockout.js
+  - backbone.js
+  - underscore.js
+
+jquery
+zepto
+
+frb
+bacon.js
+arrowlets?
+
+flapjax
+elm
+rxjs 

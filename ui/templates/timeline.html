@@ -1,0 +1,14 @@
+<a ng-href="/upload/">Upload</a>
+<div class="timeline">
+  <div class="round_end_right" ng-mouseleave="stop_zoom($event)">
+    <div ui-show="zooming" class="zoom_button zoom_in"></div>
+    <div class="zoom" ng-mouseenter="start_zoom($event)"></div>
+    <div ui-show="zooming" class="zoom_button zoom_out"></div>
+  </div>
+  <div class="round_end_left"><div class="zoom"></div></div>
+
+  <!-- <div ng:repeat=""></div> -->
+
+  <!--<div class="markers markers-top"></div>
+  <div class="markers markers-bottom"></div>-->
+</div>

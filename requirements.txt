@@ -5,11 +5,14 @@ gunicorn
 
 -e git+http://github.com/kivy/pyjnius#egg=jnius
 beautifulsoup4
+
+psycopg2
+
 gevent  
 -e git+https://github.com/john-kurkowski/tldextract#egg=tldextract
 -e git+https://github.com/srlindsay/gevent-profiler#egg=python-gevent-profiler
 gevent-psycopg2
-gevent-socketio
+-e git+https://github.com/abourget/gevent-socketio.git#egg=socketio
 
 lxml
 http://labix.org/download/python-dateutil/python-dateutil-1.5.tar.gz#egg=dateutil
