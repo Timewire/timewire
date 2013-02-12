@@ -1,4 +1,5 @@
 prod setup
 ----------
 https://github.com/yaoweibin/nginx_tcp_proxy_module
+http://stackoverflow.com/questions/4360221/haproxy-websocket-disconnection/4737648
 https://gevent-socketio.readthedocs.org/en/latest/server_integration.html

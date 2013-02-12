@@ -17,7 +17,7 @@ body {
     border-top-color: #aeaeae;
 }
 .zoom {
-    background-image: url('/assets/smaller_round_zoom.png');
+    background-image: url('/static/assets/smaller_round_zoom.png');
     background-repeat: no-repeat;
     position: absolute;
     height: 40px;
@@ -38,22 +38,22 @@ body {
 }
 .zoom_in {
    top: -40px; 
-   background-image: url('/assets/zoom_in.png');
+   background-image: url('/static/assets/zoom_in.png');
    background-repeat: no-repeat;
 }
 .zoom_out {
    top: 40px;
-   background-image: url('/assets/zoom_out.png');
+   background-image: url('/static/assets/zoom_out.png');
    background-repeat: no-repeat;
 }
 .markers {
-    background-image: url('/assets/timeline_marker.png');
+    background-image: url('/static/assets/timeline_marker.png');
     width:100%;
     height: 9px;
     position: absolute;
 }
 .marker {
-    background-image: url('/assets/timeline_marker.png');
+    background-image: url('/static/assets/timeline_marker.png');
     width:1px;
     height: 9px;
     position: absolute;
@@ -68,7 +68,7 @@ body {
 
 .round_end_left {
     background-repeat: no-repeat;
-    background-image: url('/assets/round_start.png');
+    background-image: url('/static/assets/round_start.png');
     position: absolute;
     top: -15px;
     left: -25px;
@@ -77,7 +77,7 @@ body {
 }
 .round_end_right {
     background-repeat: no-repeat;
-    background-image: url('/assets/round_end.png');
+    background-image: url('/static/assets/round_end.png');
     position: absolute;
     top: -15px;
     right: -25px;

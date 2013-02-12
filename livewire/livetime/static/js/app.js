@@ -1,14 +1,14 @@
 'use strict';
 
-var TimeWire = angular.module('TimeWire', ['ui'])
+var TimeWire = angular.module('TimeWire', ['ui', 'ngCookies'])
     .config(['$routeProvider', function($routeProvider) {
 	$routeProvider
 	    .when('/', {
-		templateUrl: '/templates/timeline.html',
+		templateUrl: '/static/templates/timeline.html',
 		controller: 'TimeLine'
 	    })
-	    .when('/upload/', {
-		templateUrl: '/templates/upload.html',
+	    .when('/uploads/', {
+		templateUrl: '/static/templates/upload.html',
 		controller: 'Upload'
 	    })
 	    .otherwise({redirectTo: '/'});

@@ -108,6 +108,7 @@ TimeWire.controller('TimeLine', function($scope) {
 });
 
 
-TimeWire.controller('Upload', function($scope) {
+TimeWire.controller('Upload', function($scope, $cookies) {
+    $scope.csrf = $cookies.csrftoken;
     var test = 0;
 });

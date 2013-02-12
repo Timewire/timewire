@@ -7,6 +7,27 @@ from django.shortcuts import get_object_or_404, render, redirect
 from livetime.models import ChatRoom
 from livetime.chat_socketio import ChatNamespace
 
+def wire(request, template="index.html"):
+    context = {}
+    return render(request, template, context)
+
+
+def process_xl(request):
+    pass
+
+def upload(request, template="index.html"):
+    if request.POST and request.FILES:
+        upload_form = UploadForm(request.POST, request.FILES)
+        
+        if form.is_valid():
+
+            process_xl(request.FILES['file'])
+        else:
+            errors = form.errors
+    context = {}
+    return render(request, template, context)
+
+
 def rooms(request, template="rooms.html"):
     """
     Homepage - lists all rooms.

@@ -7,7 +7,7 @@ import socketio.sdjango
 urlpatterns = patterns('',
                        url("^socket\.io", include(socketio.sdjango.urls)),
                        url(r'^admin/', include(admin.site.urls)),
-                       url("^livetime/", include('livetime.urls'))
+                       url("^", include('livetime.urls'))
     # Examples:
     # url(r'^$', 'livewire.views.home', name='home'),
     # url(r'^livewire/', include('livewire.foo.urls')),
