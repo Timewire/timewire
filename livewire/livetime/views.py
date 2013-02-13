@@ -27,8 +27,7 @@ def process_xl(file):
     more_rows = True
     row = 1
     while more_rows:
-        import ipdb
-        ipdb.set_trace()
+
         try:
             row_data = [d.value for d in events_sheet.row(row)[0:6] if d.value]
         except IndexError:
@@ -36,6 +35,7 @@ def process_xl(file):
             break
         if len(row_data) != 6:
             more_rows=False
+            break
         else:
             title, start_date, end_date, slug, topics, importance = row_data
             # we could bulk create the events for efficiency later if necessary
@@ -75,8 +75,9 @@ def process_xl(file):
             more_rows=False
             break
         
-        if len(row_data) < 2:
+        if len([r for r in row_data if r]) < 2:
             more_rows=False
+            break
         
         importance = row_data[0].strip() == '*' and 100 or 0
         article_url = row_data[1]
@@ -86,12 +87,12 @@ def process_xl(file):
         # when done in appengine and google task queue the article processing could be done in google task queue providing a spout to storm
         
         # in the meantime we just manually create each article and call a method on it to call the url and parse the incoming html
-
         print `event_slug`
+        print `row_data`
+        print `more_rows`
         event = Event.objects.get(slug=event_slug)
 
-        a = Article.objects.get_or_create(event=event)
-        a.parse_url(event_slug)
+        a = Article(event=event, link=article_url, importance=importance)
         a.save()
 
         row += 1

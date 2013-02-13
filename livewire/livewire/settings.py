@@ -1,3 +1,19 @@
+import os 
+
+boilerpipe_classpath = ":../boiler_pipe/boilerpipe-1.2.0/boilerpipe-1.2.0.jar:../boiler_pipe/boilerpipe-1.2.0/lib/xerces-2.9.1.jar:../boiler_pipe/boilerpipe-1.2.0/lib/nekohtml-1.9.13.jar"
+
+def set_java_classpath():
+    if not os.environ.has_key('CLASSPATH'):
+        os.environ['CLASSPATH'] = ''
+    if boilerpipe_classpath  not in os.environ['CLASSPATH']:
+        os.environ['CLASSPATH'] += boilerpipe_classpath
+
+set_java_classpath()
+
+
+
+
+
 # Django settings for livewire project.
 
 DEBUG = True

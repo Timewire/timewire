@@ -1,3 +1,26 @@
+from livetime.models import Domain
+
+try:
+    Domain.objects.get(url='bbc.co.uk')
+except Domain.DoesNotExist:        
+    bbc = Domain(url='news.bbc.co.uk',
+                 title_selector="h1.story-header",
+                 date_selector="span.date",
+                 date_fmt="%d %B %Y")
+    bbc.save()
+
+try:
+    Domain.objects.get(url='guardian.co.uk')
+except Domain.DoesNotExist:
+    guardian = Domain(url='guardian.co.uk',
+                      title_selector='#main-article-info h1',
+                      date_selector='.publication time',
+                      date_fmt="%A %d %B %Y %H.%M %Z")
+    
+    guardian.save()
+
+
+
 from django.conf.urls import patterns, include, url
 
 from django.contrib import admin
