@@ -27,6 +27,8 @@ def process_xl(file):
     more_rows = True
     row = 1
     while more_rows:
+        import ipdb
+        ipdb.set_trace()
         try:
             row_data = [d.value for d in events_sheet.row(row)[0:6] if d.value]
         except IndexError:
@@ -84,6 +86,8 @@ def process_xl(file):
         # when done in appengine and google task queue the article processing could be done in google task queue providing a spout to storm
         
         # in the meantime we just manually create each article and call a method on it to call the url and parse the incoming html
+
+        print `event_slug`
         event = Event.objects.get(slug=event_slug)
 
         a = Article.objects.get_or_create(event=event)
