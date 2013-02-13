@@ -14,6 +14,8 @@ gevent
 gevent-psycopg2
 -e git+https://github.com/abourget/gevent-socketio.git#egg=socketio
 
+xlrd
+
 lxml
 http://labix.org/download/python-dateutil/python-dateutil-1.5.tar.gz#egg=dateutil
 

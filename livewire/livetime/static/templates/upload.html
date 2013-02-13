@@ -1,4 +1,5 @@
-<form enctype="multipart/form-data" action="upload" method="POST">
+<form enctype="multipart/form-data" action="/upload/" method="POST">
+  <input name="csrfmiddlewaretoken" value="{{csrf}}" type="hidden" />
   <input name="time_file" type="file" />
   <p><input type="submit" value="Upload"></p>
 </form>
