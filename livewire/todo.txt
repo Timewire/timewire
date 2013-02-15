@@ -1,4 +1,17 @@
+Excel Parsing
+-------------
+1. Articles parallel - a) worker pool?
+   	    	       b) manual connection management?
+		       c) separate url calls to limit length of time connection is held by each thread
+		       d) ensure uniqueness of articles
+2. New selectors - default selectors
+3. Log Failed Articles and Errors - attempt to fix
+
+deployment
+----------
 bring in gunicorn and:
 a) 
 b) do gunicorn conf for postgres patching on fork 
 c) do gunicrod for gevent socketio
+
+extend fabfile to cover everything

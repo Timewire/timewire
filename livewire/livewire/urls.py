@@ -3,7 +3,7 @@ from livetime.models import Domain
 try:
     Domain.objects.get(url='bbc.co.uk')
 except Domain.DoesNotExist:        
-    bbc = Domain(url='news.bbc.co.uk',
+    bbc = Domain(url='bbc.co.uk',
                  title_selector="h1.story-header",
                  date_selector="span.date",
                  date_fmt="%d %B %Y")

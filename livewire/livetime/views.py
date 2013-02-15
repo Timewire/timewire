@@ -15,7 +15,40 @@ def wire(request, template="index.html"):
 
 from xlrd import open_workbook, xldate_as_tuple
 from datetime import datetime
-from django.db import IntegrityError
+from django.db import IntegrityError, DatabaseError, connection, transaction
+from django.core.exceptions import ValidationError
+import gevent
+from django import db
+
+def create_event(row_data, datemode):
+    title, start_date, end_date, slug, topics, importance = row_data
+    # we could bulk create the events for efficiency later if necessary
+
+    start_date = datetime(*xldate_as_tuple(start_date, datemode))
+    end_date = datetime(*xldate_as_tuple(end_date, datemode))
+    ev, new = Event.objects.get_or_create(title=title.strip(),
+                                          start_date=start_date,
+                                          end_date=end_date,
+                                          slug=slug.strip(),
+                                          importance=importance)
+
+    if not new:
+        ev.start_date = start_date
+        ev.end_date = end_date
+        ev.title = title.strip()
+        ev.importance = importance
+            
+    topics = topics.split(',')
+    for topic in topics:
+        topic = topic.strip()
+        t, created = Topic.objects.get_or_create(name=topic)
+        t.save()
+        ev.topics.add(t)
+
+    ev.save()
+    
+    db.close_connection()
+
 
 def process_xl(file):
     """should probably use map and filter to generically map excel columns to attributes and rows to object instances
@@ -26,6 +59,7 @@ def process_xl(file):
     events_sheet = wb.sheet_by_name('Events')
     more_rows = True
     row = 1
+    events = []
     while more_rows:
 
         try:
@@ -37,37 +71,15 @@ def process_xl(file):
             more_rows=False
             break
         else:
-            title, start_date, end_date, slug, topics, importance = row_data
-            # we could bulk create the events for efficiency later if necessary
-
-            start_date = datetime(*xldate_as_tuple(start_date, wb.datemode))
-            end_date = datetime(*xldate_as_tuple(end_date, wb.datemode))
-            ev, new = Event.objects.get_or_create(title=title.strip(),
-                                                  start_date=start_date,
-                                                  end_date=end_date,
-                                                  slug=slug.strip(),
-                                                  importance=importance)
-
-            if not new:
-                ev.start_date = start_date
-                ev.end_date = end_date
-                ev.title = title.strip()
-                ev.importance = importance
-            
-            topics = topics.split(',')
-            for topic in topics:
-                topic = topic.strip()
-                t, created = Topic.objects.get_or_create(name=topic)
-                t.save()
-                ev.topics.add(t)
-
-            ev.save()
-
+            events.append(gevent.spawn(create_event, *[row_data, wb.datemode]))
         row += 1
+    gevent.joinall(events)
 
     # process Articles
     more_rows = True
     row = 1
+    articles = []
+    i = 0
     while more_rows:
         try:
             row_data = [d.value for d in articles_sheet.row(row)[0:3]]
@@ -79,6 +91,27 @@ def process_xl(file):
             more_rows=False
             break
         
+        # by default each django request gets a new connection and each new thread (or spawned work) therefore gets its own connection
+        
+        # should use a connection pool or more likely a pool of gevent workers to ensure we don't go over the postgres connection limit
+
+        # oddly as little as 50 simultaneous spawns seems to be suffcient to overcrowd the postgres with max_connections set to 100?!? Perhaps the pre-init event creates a new connection too?
+        # further 1 or 2 connections are left "idle in transaction" - why, when all appear to exit? 
+        articles.append(gevent.spawn(create_article, *[row_data]))
+        i += 1
+        if i == 10:
+            gevent.joinall(articles)
+            i = 0
+        gevent.joinall(articles)
+        #create_article(row_data)
+        row += 1
+    
+
+conn = {'num': 0}
+
+def create_article(row_data):
+        conn['num'] +=1
+        print conn['num']
         importance = row_data[0].strip() == '*' and 100 or 0
         article_url = row_data[1]
         event_slug = row_data[2]
@@ -87,23 +120,40 @@ def process_xl(file):
         # when done in appengine and google task queue the article processing could be done in google task queue providing a spout to storm
         
         # in the meantime we just manually create each article and call a method on it to call the url and parse the incoming html
-        print `event_slug`
-        print `row_data`
-        print `more_rows`
+
         event = Event.objects.get(slug=event_slug)
-
         a = Article(event=event, link=article_url, importance=importance)
-        a.save()
 
-        row += 1
-        
+        try:
+            a.save()
+            print `a.headline`
+            print `a.date`
+            print `a.domain_name`
+            print `a.event.slug`
+            print `a.domain_data.url`
+            print `a.importance`
+        except ValidationError, e:
+            ## log failed article
+            print `e`
+        except IntegrityError, e:
+            ## log failed article
+            pass
+            #connection.rollback()
+        except DatabaseError:
+            ## log failed article
+            pass
+            #connection.rollback()
+        finally:
+            conn['num'] -= 1
+            print str(conn['num']) + " exited"
+            db.close_connection()
+
 
 def upload(request, template="index.html"):
     if request.POST and request.FILES:
         upload_form = UploadFileForm(request.POST, request.FILES)
         
-        if upload_form.is_valid():
-            
+        if upload_form.is_valid():            
             process_xl(request.FILES['time_file'])
         else:
             errors = upload_form.errors

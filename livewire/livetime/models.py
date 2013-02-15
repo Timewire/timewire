@@ -1,6 +1,8 @@
 
 from django.db import models
 from django.template.defaultfilters import slugify
+from django.core.exceptions import ValidationError
+
 
 from urllib2 import urlopen, URLError
 from jnius import autoclass
@@ -11,8 +13,6 @@ from tldextract.tldextract import extract
 
 #default_extractor = autoclass("de.l3s.boilerpipe.extractors.DefaultExtractor")
 article_extractor = autoclass("de.l3s.boilerpipe.extractors.ArticleExtractor")
-
-
 class TimeWire(models.Model):
     """
     """
@@ -38,38 +38,59 @@ class Article(models.Model):
     """
     """
     class meta:
-        unique_together = ('domain', 'link')
+        unique_together = ('domain_name', 'link')
     headline = models.CharField(max_length=150, blank=False, null=False)
     text = models.TextField(blank=False, null=False)
     html = models.TextField(blank=False, null=False)
     date = models.DateTimeField(blank=False, null=False)
     link = models.CharField(max_length=200, blank=False, null=False) # absolute link excluding domain name
-    domain = models.URLField(null=False, blank=False)
+    domain_name = models.URLField(null=False, blank=False)
     topic = models.ManyToManyField(Topic)    
     event = models.ForeignKey('Event', related_name='articles')
-    domain = models.ForeignKey('Domain', related_name='articles')
+    domain_data = models.ForeignKey('Domain', related_name='articles')
     importance = models.FloatField(blank=False, null=False)
     
     def get_soup(self):
         try:
             return self.soup
         except AttributeError:
-            return BeautifulSoup(self.read_url(self.get_url()), 'lxml')
+            try:
+                return BeautifulSoup(self.read_url(self.get_url()), 'lxml')
+            except TypeError:
+                raise ValidationError("can't parse html")
+                #log failed article
 
 
     def read_url(self, url):
         # check robots.txt
-        try:
-            self.html
-        except AttributeError:
+        html = getattr(self, 'html')
+        if not html:
             try:
-                page = urlopen(url)
-                self.html  = page.read()
+                page = urlopen('http://' + url)
+                setattr(self, 'html', page.read())
                 page.close()
             except URLError:
-                self.html = ""
-        finally:
-            return self.html 
+                html = None
+            except ValueError:
+                html = None
+
+        return html 
+
+    def get_domain_entry(self, domain_str):
+        domain = None
+        try:
+            domain = Domain.objects.get(pk=domain_str)
+        except Domain.DoesNotExist:
+            try:
+                domain_str = domain_str.split('.', 1)[1]
+                domain = self.get_domain_entry(domain_str)
+            except IndexError:
+                pass
+
+        return domain
+
+    def get_url(self):
+        return ''.join([getattr(self, 'domain_name'), getattr(self, 'link')])
 
     def set_url(self, url):
         url = url.strip()
@@ -79,55 +100,74 @@ class Article(models.Model):
             if seg:
                 segs.append(seg)
         domain_str = '.'.join(segs)
-
-        try:
-            domain = Domain.objects.get(pk=domain_str)
-        except Domain.DoesNotExist:
-            domain = Domain(url = domain_str)
+        domain = self.get_domain_entry(domain_str)
+        if not domain:
+            domain = Domain(url=domain_str) # create the domain guessing the values
             domain.save()
 
-        setattr(self, 'domain', domain)
-        try:
-            setattr(self, 'link', url.split(domain_str, 1)[1])
-        except:
-            import ipdb
-            ipdb.set_trace()
+        setattr(self, 'domain_name', domain_str)
+        setattr(self, 'domain_data', domain)
+        setattr(self, 'link', url.split(domain_str, 1)[1])
+
         self.get_soup()
         self.set_title()
         self.set_date()
         self.set_content()
 
-    def get_url(self):
-        return ''.join([getattr(self, 'domain').url, getattr(self, 'link')])
         
 
     def set_title(self):
-        setattr(self, 'headline', self.get_soup().select(self.domain.title_selector)[0].text[0:150])
+        try:
+            title_element = self.get_soup().select(self.domain_data.title_selector)[0]
+        except IndexError:
+            print "title element not found"
+            title_element = None
+        finally:
+            if title_element:
+                title = title_element.text.encode('utf-8')[0:150]
+            else:
+                title = ''
+
+        setattr(self, 'headline', title)
+
 
     def set_content(self):
         # check if this need patching to do asynchrous IO, or monkey patching does the job
-        setattr(self, 'text', article_extractor.INSTANCE.getText(self.html))
+        setattr(self, 'text', article_extractor.INSTANCE.getText(getattr(self, 'html')))
 
     def set_date(self):
         #print `datetime.strptime(self.get_soup().select(self.site_data["date_selector"])[0].text, self.site_data['date_fmt'])`
-        date_str = self.get_soup().select(self.domain.date_selector)[0].text
-        date = datetime.strptime(date_str, self.domain.date_fmt)
+        try:
+            date_element = self.get_soup().select(self.domain_data.date_selector)[0]
+        except IndexError:
+            date_element = None
+        finally:
+            if date_element:
+                try:
+                    date = datetime.strptime(date_element.text.encode('utf-8'), self.domain_data.date_fmt)
+                except ValueError:
+                    date = None
+            else:
+                date = None
+
         setattr(self, 'date', date)
 
 
         #return date_parser.parse(date_string, fuzzy=True, dayfirst=True)
 
-
+import gevent
 
 def parse_url(**kwargs):
     """ assumes that the Article has been instantiated with the full url in 'link' and an Event instance in 'event'.
     """
+
     article = kwargs['instance']
-    article.set_url(article.link)
-        
+    ev = gevent.spawn(article.set_url, article.link)
+    gevent.joinall([ev])
+
 from django.db.models.signals import pre_save
 
-pre_save.connect(parse_url, Article)
+pre_save.connect(parse_url, Article) #should rather user model validation Model.clean() method
 
 class Event(models.Model):
     class Meta:
