@@ -102,10 +102,9 @@ def process_xl(file):
         if i == 10:
             gevent.joinall(articles)
             i = 0
-        gevent.joinall(articles)
         #create_article(row_data)
         row += 1
-    
+    gevent.joinall(articles)
 
 conn = {'num': 0}
 

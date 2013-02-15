@@ -37,7 +37,7 @@ class Topic(models.Model):
 class Article(models.Model):
     """
     """
-    class meta:
+    class Meta:
         unique_together = ('domain_name', 'link')
     headline = models.CharField(max_length=150, blank=False, null=False)
     text = models.TextField(blank=False, null=False)
@@ -117,16 +117,25 @@ class Article(models.Model):
         
 
     def set_title(self):
+        ele_select_data = self.domain_data.title_selector.split('&')
+        ele_property = None
+        if len(ele_select_data) == 2:
+            ele_property =  ele_select_data[1]
+        ele_selector = ele_select_data[0]
+
         try:
-            title_element = self.get_soup().select(self.domain_data.title_selector)[0]
+            title_element = self.get_soup().select(ele_selector)[0]
         except IndexError:
             print "title element not found"
             title_element = None
         finally:
             if title_element:
-                title = title_element.text.encode('utf-8')[0:150]
+                if ele_property:
+                    title = title_element.attrs[ele_property].encode('utf-8')[0:150]
+                else:
+                    title = title_element.text.encode('utf-8')[0:150]
             else:
-                title = ''
+                title = None
 
         setattr(self, 'headline', title)
 
@@ -138,13 +147,22 @@ class Article(models.Model):
     def set_date(self):
         #print `datetime.strptime(self.get_soup().select(self.site_data["date_selector"])[0].text, self.site_data['date_fmt'])`
         try:
-            date_element = self.get_soup().select(self.domain_data.date_selector)[0]
+            ele_select_data = self.domain_data.date_selector.split('&')
+            ele_property = None
+            if len(ele_select_data) == 2:
+                ele_property =  ele_select_data[1]
+            ele_selector = ele_select_data[0]
+
+            date_element = self.get_soup().select(ele_selector)[0]
         except IndexError:
             date_element = None
         finally:
             if date_element:
                 try:
-                    date = datetime.strptime(date_element.text.encode('utf-8'), self.domain_data.date_fmt)
+                    if ele_property:
+                        date = datetime.strptime(date_element.attrs[ele_property].encode('utf-8'), self.domain_data.date_fmt)
+                    else:
+                        date = datetime.strptime(date_element.text.encode('utf-8'), self.domain_data.date_fmt)
                 except ValueError:
                     date = None
             else:
