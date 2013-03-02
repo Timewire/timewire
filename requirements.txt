@@ -1,6 +1,8 @@
 # apt-get install libevent1-dev, python-virtualenv, python2.7-dev, openjdk-7-jdk, libxslt1-dev
 
 django
+wadofstuff-django-serializers
+
 gunicorn
 
 -e git+http://github.com/kivy/pyjnius#egg=jnius

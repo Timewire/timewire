@@ -9,7 +9,7 @@ from livetime.forms import UploadFileForm
 from livetime.models import ChatRoom, Event, Article, Topic
 from livetime.chat_socketio import ChatNamespace
 
-def wire(request, template="index.html"):
+def wire(request, topics=[], template="index.html"):
     context = {}
     return render(request, template, context)
 
@@ -161,6 +161,47 @@ def upload(request, template="index.html"):
     return redirect('/')
     #return render(request, template, context)
 
+
+from django.utils.simplejson import dumps, loads, JSONEncoder
+from django.core import serializers
+
+
+def jsonify_events(events, articles):
+    for ev in events:
+        ev.arts = ev.articles
+    
+    events = serializers.serialize('json', events, indent=4, extras=('get_articles',))
+    
+    articles = serializers.serialize('json', articles, indent=4, excludes=('html'))
+    json = "[%s, %s]" %(events, articles)
+    return json
+    #'articles':jsonify_articles(ev.articles)}]
+
+def aggregate(request):
+    json = "[[], []]"
+    if request.GET:
+        topics = request.GET.get('topics', []).split(',')
+        if topics:
+            start = request.GET.get('start', None)
+            end = request.GET.get('end', None)
+            events = []
+            for topic in topics:
+                # find the Events with an intersection of the topic names
+                if not events:
+                    events = Event.objects.filter(topics__name=topic)
+                else:
+                    events = events.filter(topics__name=topics)
+            if start:
+                events = events.filter(start_date__gt=start)
+            if end:
+                events = events.filter(end_date__lt=end)
+            articles = Article.objects.filter(event__in=events)
+
+            json = jsonify_events(events, articles)
+
+    return HttpResponse(json, mimetype='application/json')
+        
+        
 
 def rooms(request, template="rooms.html"):
     """

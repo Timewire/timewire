@@ -1,5 +1,30 @@
 <a ng-href="/uploads/">Upload</a>
-<div class="timeline">
+<div class="topics">
+<span>{{start_date}}</span>
+<span>{{end_date}}</span>
+  <span ng:repeat="topic in topics" >{{topic}}<a ng-click="del_topic($index)" href="">x</a>,</span>
+  <form method="GET">
+  <input type="search" name="topics" ng-model="new_topic" value="" autocomplete="on" />
+  <input type="submit" value="add a topic"  ng-click="add_topic()" />
+</form>
+</div>
+<div class="timeline_container">
+  <div class="timeline" id="timeline">
+    <div ng:repeat="marker in all_markers" class="date_marker" style="height:{{marker.height}}px;top:-{{marker.height}}px;left:{{marker.left}}px;"></div>
+    <div ng:repeat="marker in all_markers" class="date_box" style="left:{{marker.box_left}}px;width:{{date_box_width}}px;">
+      <h3 class="month_label" ng-show="chosen_level=='month' || chosen_level=='quarter' || chosen_level=='day'">{{marker.day_txt}}&nbsp;{{marker.month_txt}}</h3>
+      <h3 class="year_label">{{marker.year_txt}}</h3>
+    </div>
+    <div ng:repeat="ev in shown_events" class="marker" style="left:{{ev.left}}px;top:-{{ev.height}}px;height:{{ev.height}}px;">
+    </div>
+    <div ng:repeat="ev in shown_events" class="event_box" style="top:-{{ev.box.top}}px;left:{{ev.box.left}}px;width:{{ev.box.width}}px;height:{{ev.box.height}}px;">
+      <div class="event_text_box" style="line-height:{{ev.box.line_height}}px;">
+<!--	  {{ev.fields.importance}}
+	  {{ev.box.right}} -->
+	  {{ev.fields.title}}
+      </div>
+    </div>
+  </div>
   <div class="round_end_right" ng-mouseleave="stop_zoom($event)">
     <div ui-show="zooming" class="zoom_button zoom_in"></div>
     <div class="zoom" ng-mouseenter="start_zoom($event)"></div>
@@ -7,8 +32,4 @@
   </div>
   <div class="round_end_left"><div class="zoom"></div></div>
 
-  <!-- <div ng:repeat=""></div> -->
-
-  <!--<div class="markers markers-top"></div>
-  <div class="markers markers-bottom"></div>-->
 </div>
