@@ -68,13 +68,11 @@ sites = {'bbc.co.uk':{'title_selector':'h1 .story-header',
                                'date_fmt':"/%Y/%b/%d"},
          'common': {'title_selector':["title",'meta[property=og:title]&content'],
                     'date_selector':['meta[property=pdate]'],
-                    'date_fmt':["%Y%m%d"], 
-                    'keywords':["meta[property=keywords]&content"],
-                    'article_image':["meta[property=og:image]&content"],                  
+                    'date_fmt':["%Y%m%d"]
                     }
          }
-
-
+# 'article_image':["meta[property=og:image]&content"],                  
+# 'keywords':["meta[property=keywords]&content"],
 
 
 def create_if_doesnt_exist(url):
