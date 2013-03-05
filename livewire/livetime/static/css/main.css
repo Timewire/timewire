@@ -1,20 +1,33 @@
+html,body {
+    height:100%;
+}
+
 body {
     background-color: #FFFAF1;
     margin:0px;
 }
-.timeline {
-    position: fixed;
-    background-color: #f6f6f6;
-    left: 3%;
+.timeline_container{
+    top: 70%;
+    position:fixed;
     width:94%;
-    top: 50%;
-    height: 20px;
+    left:3%;
+    height: 24px;
+    background-color: #f6f6f6;
     border-bottom-style: solid;
     border-bottom-width: 1px;
     border-bottom-color: #aeaeae;
     border-top-style: solid;
     border-top-width: 1px;
     border-top-color: #aeaeae;
+}
+.timeline {
+    position: relative;
+    width:94%;
+    left:3%;
+
+}
+.timeline h3 {
+    
 }
 .zoom {
     background-image: url('/static/assets/smaller_round_zoom.png');
@@ -52,13 +65,51 @@ body {
     height: 9px;
     position: absolute;
 }
-.marker {
-    background-image: url('/static/assets/timeline_marker.png');
-    width:1px;
-    height: 9px;
-    position: absolute;
-    background: repeat-y: 
+.event_text_box {
+    overflow: hidden;
+    height: 100%;
+    margin: 5px;
+    font-family:"Merriweather";
+    font-size: .9em;
+    text-align: center;
 }
+.event_box {
+    position:absolute;
+    background: #ffffff;
+    border: 1px solid #aeaeae;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    padding: 5px 5px 5px 5px;
+}
+.marker {
+    background: url('/static/assets/marker_for_div.png') repeat-y;
+    width:1px;
+    position: absolute;
+    z-index: -1;
+}
+.date_marker {
+    background: url('/static/assets/marker_for_date.png') repeat;
+    width: 2px;
+    position: absolute;
+}
+.date_box {
+    height:22px;
+    top:0px;
+    margin-top:1px;
+    position: absolute;
+    z-index: 1;
+    text-align: center;
+}
+.date_box h3 {
+    font-family:"Open Sans";
+    font-size: .7em;
+    font-weight: 100;
+    margin: 0px;
+    height: 11px;
+    padding: 0px;
+    line-height: 11px;
+}
+
 .markers-top {
     top: -9px;   
 }

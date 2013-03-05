@@ -39,6 +39,7 @@ class Article(models.Model):
     """
     class Meta:
         unique_together = ('domain_name', 'link')
+        ordering = ('event', 'importance')
     headline = models.CharField(max_length=150, blank=False, null=False)
     text = models.TextField(blank=False, null=False)
     html = models.TextField(blank=False, null=False)
@@ -202,7 +203,9 @@ class Event(models.Model):
     #def set_slug()
        #set the slug from the headline
 
-
+    def get_articles(self):
+        articles = [art.id for art in self.articles.all()]
+        return articles
 
 
 class Domain(models.Model):

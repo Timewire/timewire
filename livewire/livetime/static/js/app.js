@@ -7,6 +7,10 @@ var TimeWire = angular.module('TimeWire', ['ui', 'ngCookies'])
 		templateUrl: '/static/templates/timeline.html',
 		controller: 'TimeLine'
 	    })
+	    .when('/topics/:topics', {
+		templateUrl: '/static/templates/timeline.html',
+		controller: 'TimeLine'
+	    })
 	    .when('/uploads/', {
 		templateUrl: '/static/templates/upload.html',
 		controller: 'Upload'

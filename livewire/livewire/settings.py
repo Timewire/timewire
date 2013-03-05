@@ -12,7 +12,9 @@ set_java_classpath()
 
 
 
-
+SERIALIZATION_MODULES = {
+    'json': 'wadofstuff.django.serializers.json'
+}
 
 # Django settings for livewire project.
 
