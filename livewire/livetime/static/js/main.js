@@ -49,7 +49,7 @@ TimeWire.controller('TimeLine', function ($scope, $http, $route, $routeParams, $
 	}
     };
     init();
-    
+    window.addEventListener("resize", init, false);
     var get_marker_position = function(date) {
 	var left = get_date_pos(date);
 	var day_txt = "";
@@ -143,7 +143,6 @@ TimeWire.controller('TimeLine', function ($scope, $http, $route, $routeParams, $
 
     var get_date_markers = function () {
 	var max_markers = $scope.timeline_width/($scope.date_box_width*2.5);
-	console.log(max_markers);
 	$scope.chosen_level = "year";
 	var levels = _.map(["year", "quarter", "month", "day"], how_many_markers);
 	    _.each(levels, function(level) {
@@ -229,10 +228,10 @@ TimeWire.controller('TimeLine', function ($scope, $http, $route, $routeParams, $
 		// add "conflict" for second and third level in rare case they overlap
 		// resolve this by shift the box of the previous event as there will always be space
 		// or working backwards from last to first remove the conflicting box
-		if (event.box.left < $scope.layers[index].first_insert_point) {
-		    $scope.layers[index][$scope.layers[index].length].conflict_right = true; ;
+		/* if (event.box.left < $scope.layers[index].first_insert_point) {
+		    $scope.layers[index][$scope.layers[index].length].conflict_right = true;
 		    event.box.conflict_left = true;
-		}
+		} */
 
 		$scope.layers[index].events.push(event);
 		$scope.layers[index].first_insert_point = event.box.right;
@@ -252,20 +251,18 @@ TimeWire.controller('TimeLine', function ($scope, $http, $route, $routeParams, $
 
 	$scope.duration = $scope.end_date - $scope.start_date;
 
-	var timeline = document.getElementById('timeline');
+	var timeline = document.getElementById('active_region');
 	$scope.timeline_width = timeline.offsetWidth;
-
 	$scope.date_box_width = 35;
 	$scope.date_marker_width = 2;
 	$scope.day_marker_width = 1;
 	$scope.all_markers = get_date_markers();
-
 	var opts = {
 	    "timeline_height": timeline.offsetHeight,
-	    "box_width": 130,
-	    "box_padding": 5,
-	    "box_spacing": 5,
-	    "layer_height": 100};
+	    "box_width": $scope.timeline_width/10,
+	    "box_padding":$scope.timeline_width/260,
+	    "box_spacing": $scope.timeline_width/260,
+	    "layer_height": 100}; //layer_height should be set dynamically
 
 	$scope.layers = _.map(_.range(0, 3), function (layer_index) {
 				  return {'swaps':[], 'events':[], 'first_insert_point':-((opts.box_width/2) + opts.box_padding + 1)};
@@ -306,7 +303,27 @@ TimeWire.controller('TimeLine', function ($scope, $http, $route, $routeParams, $
     var y_pos = undefined;
     var ele_width = undefined;
     var ele_height = undefined;
+    var timeline = document.getElementById("timeline");
 
+
+    $scope.open_event = function ($event) {
+	$event.stopPropagation();
+	return false;
+    };
+    $scope.start_scroll = function ($event) {
+	$scope.start_pos = $event.pageX;
+	document.body.addEventListener("pointermove", $scope.scroll_move, false);
+	document.body.addEventListener("pointerup", $scope.scroll_end, false);
+    };
+    $scope.scroll_move = function ($event) {
+	var left = timeline.offsetLeft + ($event.pageX - $scope.start_pos);
+	$scope.start_pos = $event.pageX;
+ 	timeline.style.left = left + "px";
+    };
+    $scope.scroll_end = function ($event) {
+	document.body.removeEventListener("pointermove", $scope.scroll_move, false);
+	document.body.removeEventListener("pointerup", $scope.scroll_end, false);
+    };
     $scope.start_zoom = function ($event) {
 	x_pos = getOffset($event.target).left;
 	ele_width = $event.target.offsetWidth;

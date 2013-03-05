@@ -1,15 +1,23 @@
 html,body {
     height:100%;
 }
-
+* {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
 body {
     background-color: #FFFAF1;
     margin:0px;
 }
 .timeline_container{
-    top: 70%;
-    position:fixed;
+    top: 90%;
+    position:absolute;
     width:94%;
+    min-width: 1000px;
     left:3%;
     height: 24px;
     background-color: #f6f6f6;
@@ -20,11 +28,19 @@ body {
     border-top-width: 1px;
     border-top-color: #aeaeae;
 }
-.timeline {
-    position: relative;
+#active_region {
+    position: absolute;
     width:94%;
     left:3%;
-
+    height: 24px;
+}
+.timeline {
+    position: fixed;
+    //width:94%;
+    //left:3%;
+    height: 24px;
+    z-index: 1;
+    cursor: move;
 }
 .timeline h3 {
     
