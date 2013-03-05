@@ -1,4 +1,4 @@
-# apt-get install libevent1-dev python-virtualenv python2.7-dev openjdk-7-jdk libxslt1-dev postgresql-9.1 libpq-dev git ssh
+# apt-get install libevent1-dev python-virtualenv python2.7-dev openjdk-7-jdk libxslt1-dev postgresql-9.1 libpq-dev git ssh nginx
 
 django
 wadofstuff-django-serializers
