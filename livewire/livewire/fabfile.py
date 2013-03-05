@@ -6,7 +6,7 @@ from functools import wraps
 
 @task
 def local():
-    env.user = 'salfield'
+    env.user = 'afaq'
     env.hosts = ['localhost']
 
 def log_call(func):
