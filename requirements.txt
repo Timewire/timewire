@@ -1,10 +1,14 @@
-# apt-get install libevent1-dev python-virtualenv python2.7-dev openjdk-7-jdk libxslt1-dev postgresql-9.1 libpq-dev git ssh nginx
+# linux: apt-get install libevent1-dev python-virtualenv python2.7-dev openjdk-7-jdk libxslt1-dev postgresql-9.1 libpq-dev git ssh nginx
+# mac: first install xcode homebrew xcode command line tools 
+# brew install git nginx postgresql libevent libxslt postgres --use-gcc --no-perl 
+# sudo easy_install virtualenv pip
 
 django
 wadofstuff-django-serializers
 
 gunicorn
 fabric
+
 
 -e git+http://github.com/kivy/pyjnius#egg=jnius
 beautifulsoup4
