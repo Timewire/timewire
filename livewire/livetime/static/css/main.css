@@ -1,7 +1,7 @@
 html,body {
     height:100%;
 }
-* {
+body .timeline_container {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -13,6 +13,28 @@ body {
     background-color: #FFFAF1;
     margin:0px;
 }
+a {
+    text-decoration: none;
+    color:#800000;
+    font-weight: 500;
+}
+a:hover {
+    font-weight:800;
+}
+h1, h2, h3, h4 {
+    font-family:"Merriweather";
+}
+h1 {
+    font-size: 2.2em;
+}
+h4 {
+    font-size: 0.84em;
+}
+p {
+   font-family:"Open Sans";
+   font-size: .84em; 
+}
+/* TimeLine CSS */
 .timeline_container{
     top: 90%;
     position:absolute;
@@ -33,14 +55,12 @@ body {
     width:94%;
     left:3%;
     height: 24px;
+    z-index:1;
+    cursor: move;
 }
 .timeline {
     position: fixed;
-    //width:94%;
-    //left:3%;
     height: 24px;
-    z-index: 1;
-    cursor: move;
 }
 .timeline h3 {
     
@@ -96,12 +116,15 @@ body {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
     padding: 5px 5px 5px 5px;
+    cursor:pointer;
 }
+
 .marker {
     background: url('/static/assets/marker_for_div.png') repeat-y;
     width:1px;
     position: absolute;
     z-index: -1;
+    cursor:auto;
 }
 .date_marker {
     background: url('/static/assets/marker_for_date.png') repeat;
@@ -155,3 +178,131 @@ body {
     opacity: 1;
     transition: all 1s ease; // You should probably browser-prefix this
 }
+
+/* Event CSS */
+.event-background {
+    position: absolute;
+    left: 0%;
+    top: 0%;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    background: #181818;
+}
+.event-overlay {
+    width: 84%;
+    height: 84%;
+    position: absolute;
+    padding: 0%;
+    top: 8%;
+    left: 8%;
+    background: #FFFAF1;
+}
+.event-overlay .event-content {
+    position:absolute;
+    left:5%;
+    top: 2%;
+    width: 90%;
+}
+.event-overlay .event-date {
+    position:absolute;
+    top: -35px;
+    height: 30px;
+    background: #c8c8c8; 
+    border-bottom: 5px solid #800000;
+    border-top-left-radius: 10px 5px;
+    border-top-right-radius: 10px 5px;
+}
+.event-overlay h1 {
+    margin-top: 15px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #800000;
+}
+.event-overlay .event-date h3 {
+    margin:5px 5px 0px 5px;
+}
+.event-overlay .left { 
+    position:absolute;
+    width: 33%;
+    left: 0%;
+    background: #FFFFFF;
+    padding-right: 7.5px;
+    border-right: 1px solid #800000;
+}
+.event-overlay .left-middle {
+    margin-left:7.5px;
+    margin-right:7.5px;
+}
+.event-overlay .right {
+    position:relative;
+    width: 66%;
+    left: 33%;
+    padding-left: 15px;
+    margin-left: 7.5px; 
+    border-left: 1px solid #800000;
+}
+.event-overlay .right-top, .event-overlay .right-bottom {
+    background: #FFFFFF;
+}
+.event-overlay h2 {
+    text-align: justify;
+    margin-top: 0px;
+    font-size: 1.35em;
+}
+.event-overlay h4.author {
+    margin-bottom: 0px;
+}
+.event-overlay h4.domain {
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+.event-overlay p {
+    -moz-column-gap:30px; 
+    -webkit-column-gap:30px;
+    column-gap:30px;
+    text-align: justify;
+    margin-top: 0px;
+}
+.event-overlay .close {
+    position:absolute;
+    right:-12.5px;
+    top:-12.5px;
+    background: #800000;
+    width:25px;
+    height:25px;
+    text-align: center;
+    border-radius: 50%;
+    display:inline-block;
+    vertical-align:middle; 
+    margin:0px;
+    padding: 0px;
+}
+.event-overlay .close a {
+    line-height:22px;
+    color: #FFFFFF;
+    font-family:"Open Sans";
+    font-weight: 500;
+    font-size: 18px;
+}
+.event-overlay .close a:hover {
+    font-weight: 900;    
+}
+.event-overlay a.link {
+    font-weight: 800;
+    font-size: 1.1em;
+    position: relative;
+    top: 2px;
+    left: 5px;
+}
+.event-overlay .left p {
+    -moz-column-count:1; 
+    -webkit-column-count:1;
+    column-count:1;
+}
+.event-overlay .right-top p,  .event-overlay .right-bottom p{
+    -moz-column-count:2;
+    -webkit-column-count:2;
+    column-count:2;
+}
+
