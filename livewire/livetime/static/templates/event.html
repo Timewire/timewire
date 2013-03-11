@@ -1,0 +1,35 @@
+<div class="event-background">
+      {{event}}
+  <div class="event-overlay">
+    <div class="event-date">
+      <h3>{{event.start_date|date}}</h3>
+    </div>
+    <p class="close" ng-click="close_event()"><a>x</a></p>
+    <div class="event-content">
+      <h1>{{event.fields.title}}</h1>
+      <div class="left">
+	<div class="left-middle">
+	  <h2>{{shown_articles[0].fields.headline}}</h2>
+	  <h4 class="author">By Christina Rebel{{shown_articles[0].fields.author}}</h4>
+	  <h4 class="domain"><a href="http://{{shown_articles[0].fields.domain_name}}">{{shown_articles[0].fields.domain_name}}</a></h4>
+	  <p ui-if="shown_articles[0]">{{shown_articles[0].fields.text | truncate:750}}<a class="link" href="http://{{shown_articles[0].fields.domain_name}}{{shown_articles[0].fields.link}}">&gt;&gt;</a></p>
+	</div>
+      </div>
+      <div class="right">
+	<div class="right-top">
+	  <h2 ui-if="shown_articles[1]">{{shown_articles[1].fields.headline}}</h2>
+	  <h4 class="author">By Christina Rebel{{shown_articles[0].fields.author}}</h4>
+	  <h4 class="domain"><a href="http://{{shown_articles[0].fields.domain_name}}">{{shown_articles[0].fields.domain_name}}</a></h4>
+	  <p ui-if="shown_articles[1]">{{shown_articles[1].fields.text|truncate:750}}<a class="link" href="http://{{shown_articles[1].fields.domain_name}}{{shown_articles[1].fields.link}}">&gt;&gt;</a></p>
+	</div>
+	<div class="right-bottom">
+	  <h2>{{shown_articles[2].fields.headline}}Arab League votes to suspend Syria if it doesn't end violence against protesters</h2>
+	  <h4 class="author">By Christina Rebel{{shown_articles[2].fields.author}}</h4>
+	  <h4 class="domain"><a href="http://{{shown_articles[2].fields.domain_name}}">{{shown_articles[2].fields.domain_name}}bbc.co.uk</a></h4>
+	  <p>{{shown_articles[2].fields.text|truncate:750}} Arab League sanctions for Syria   The Arab League has voted to suspend Syria from its meetings and impose sanctions against Damascus over its failure to end a government crackdown on protesters. It asked member states to withdraw their ambassadors, and urged Damascus to end violence against protesters. The vote came after Syria ignored an Arab League proposal envisaging the start of dialogue with the opposition. But Syria's representative said the decision violated the league's charter. Youssef Ahmed told Syrian state TV said it showed the league was "serving a Western and American agenda". In Damascus, hundreds of Syrian government supporters threw rocks at the Saudi embassy, and some managed to get in, smashing windows and sacking the bui<a class="link" href="http://{{shown_articles[2].fields.domain_name}}{{shown_articles[2].fields.link}}">&gt;&gt;</a></p>
+	</div>
+      </div>
+    </div>
+  </div>
+</div>
+     <!-- {{shown_articles}} -->
