@@ -1,7 +1,13 @@
 # linux: apt-get install libevent1-dev python-virtualenv python2.7-dev openjdk-7-jdk libxslt1-dev postgresql-9.1 libpq-dev git ssh nginx
+
 # mac: first install xcode homebrew xcode command line tools 
-# brew install git nginx postgresql libevent libxslt postgres --use-gcc --no-perl 
+# brew install git nginx postgresql libevent libxslt python
+# brew link python
+# brew install postgres --use-gcc --no-perl 
 # sudo easy_install virtualenv pip
+# create virtualenv with the brew python not system python
+# execute python setup.py install in jnius source
+# ?? export cc=/CLANG_PATH ??
 
 django
 wadofstuff-django-serializers
