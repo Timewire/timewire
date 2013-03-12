@@ -9,6 +9,7 @@
 # execute python setup.py install in jnius source
 # ?? export cc=/CLANG_PATH ??
 
+simplejson==1.9.3
 django
 wadofstuff-django-serializers
 

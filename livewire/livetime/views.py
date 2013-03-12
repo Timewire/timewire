@@ -19,6 +19,7 @@ from django.db import IntegrityError, DatabaseError, connection, transaction
 from django.core.exceptions import ValidationError
 import gevent
 from django import db
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 def create_event(row_data, datemode):
     title, start_date, end_date, slug, topics, importance = row_data
@@ -147,7 +148,7 @@ def create_article(row_data):
             print str(conn['num']) + " exited"
             db.close_connection()
 
-
+@ensure_csrf_cookie
 def upload(request, template="index.html"):
     if request.POST and request.FILES:
         upload_form = UploadFileForm(request.POST, request.FILES)
