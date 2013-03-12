@@ -9,16 +9,16 @@
 </form>
 </div>
 <div class="timeline_container">
-  <div id="active_region">
-    <div class="timeline"  ui-event="{pointerdown : 'start_scroll($event)'}">
+  <div id="active_region" ui-event="{pointerdown : 'start_scroll($event)'}">
+    <div class="timeline">
       <div ng:repeat="marker in all_markers" class="date_marker" style="height:{{marker.height}}px;top:-{{marker.height}}px;left:{{marker.left}}px;"></div>
       <div ng:repeat="marker in all_markers" class="date_box" style="left:{{marker.box_left}}px;width:{{date_box_width}}px;">
 	<h3 class="month_label" ng-show="chosen_level=='month' || chosen_level=='quarter' || chosen_level=='day'">{{marker.day_txt}}&nbsp;{{marker.month_txt}}</h3>
 	<h3 class="year_label">{{marker.year_txt}}</h3>
       </div>
-      <div ng:repeat="ev in shown_events" class="marker" style="left:{{ev.left}}px;top:-{{ev.height}}px;height:{{ev.height}}px;">
+      <div ng:repeat="ev in shown_events" class="marker" style="left:{{ev.left}}px;top:-{{ev.height}}px;height:{{ev.height}}px;" ui-event="{pointerdown : 'stop_prop($event)'}" >
       </div>
-      <div ng:repeat="ev in shown_events" class="event_box" style="top:-{{ev.box.top}}px;left:{{ev.box.left}}px;width:{{ev.box.width}}px;height:{{ev.box.height}}px;" ui-event="{pointerdown : 'open_event($event);'}">  
+      <div ng:repeat="ev in shown_events" class="event_box" style="top:-{{ev.box.top}}px;left:{{ev.box.left}}px;width:{{ev.box.width}}px;height:{{ev.box.height}}px;" ui-event="{pointerdown : 'open_event($event, ev.pk);'}">  
 	<div class="event_text_box" style="line-height:{{ev.box.line_height}}px;">
 	  {{ev.fields.importance}}
 	  <!--	  {{ev.box.right}} -->

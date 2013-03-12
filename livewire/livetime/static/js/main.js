@@ -28,28 +28,39 @@ function getOffset( el ) {
     }
     return { top: _y, left: _x };
 }
+TimeWire.controller('Event', function ($scope, $http, $route, $routeParams, $location, dataService) {
+    var render_event = function (data) {
+	$scope.events = data[0];
+	$scope.articles = data[1];
+	$scope.event = _.where($scope.events, {'pk':Number($route.current.params.event_id)})[0];
+	$scope.event.start_date = new Date($scope.event.fields.start_date);
+	var article_ids = angular.fromJson($scope.event.extras.get_articles);
+	$scope.shown_articles = _.filter($scope.articles, function (art) {
+	    return _.contains(article_ids, art.pk);
+	});
+    };
+    dataService().then(render_event);
+    $scope.close_event = function () {
+	$location.path('/topics/'+$scope.topics.join('/'));
+    };
+});
 
-TimeWire.controller('TimeLine', function ($scope, $http, $route, $routeParams, $location) {
-    var init = function() {
+TimeWire.controller('TimeLine', function ($scope, $http, $route, $routeParams, $location, $rootScope, dataService) {
+    var init = function(data) {
+	window.addEventListener("resize", init, false);
 	$scope.new_topic = "";
-	$scope.topics = [];
-	$scope.events = [];
-	$scope.articles = [];
-	if ($route.current.params['topics']!==undefined && $route.current.params['topics'].length>0) {
-	    $scope.topics = $route.current.params['topics'].split(',');
-	    $http({method: 'GET', url: '/aggregate?topics='+ $scope.topics.join(',')}).
-		success(function(data, status, headers, config){
-		    $scope.new_topic = "";
-		    $scope.events = data[0];
-		    $scope.articles = data[1];
-		    render_timewire();
-	    });
+	$scope.events = data[0];
+	$scope.articles = data[1];
+	if ($scope.topics.length > 0) {
+	    if ($scope.events.length>0) {
+		render_timewire();
+	    }
 	} else {
 	    $location.path('/');
 	}
     };
-    init();
-    window.addEventListener("resize", init, false);
+    dataService().then(init);
+
     var get_marker_position = function(date) {
 	var left = get_date_pos(date);
 	var day_txt = "";
@@ -191,7 +202,6 @@ TimeWire.controller('TimeLine', function ($scope, $http, $route, $routeParams, $
 	ev.box.width = opts.box_width;
 	ev.box.left = ev.left - ((ev.box.width/2) + opts.box_padding);
 	ev.box.right = ev.box.left + ev.box.width + 2*opts.box_padding + opts.box_spacing;
-	ev.layer = 0;
 
 	if ($scope.event_group.length) {
 	    if ($scope.event_group[0].box.right > ev.box.left) {
@@ -222,9 +232,9 @@ TimeWire.controller('TimeLine', function ($scope, $http, $route, $routeParams, $
 	    return event.fields.start_date;
 	});
 
-	var index = 0;
+	var index = 2;
 	_.each($scope.event_group, function (event) {
-	    if (index<3) {
+	    if (index >= 0) {
 		// add "conflict" for second and third level in rare case they overlap
 		// resolve this by shift the box of the previous event as there will always be space
 		// or working backwards from last to first remove the conflicting box
@@ -235,30 +245,34 @@ TimeWire.controller('TimeLine', function ($scope, $http, $route, $routeParams, $
 
 		$scope.layers[index].events.push(event);
 		$scope.layers[index].first_insert_point = event.box.right;
-		event.layer = index;
+		event.layer = $scope.index_to_layer[index];
 		event.height = 40 + opts.layer_height * event.layer;
 		event.box.height = event.box.width/1.62;
 		event.box.top = event.height + event.box.height;
 		event.box.line_height = (event.box.height/5).toFixed(0);
 		$scope.shown_events.push(event);
-		index += 1;
+		index -= 1;
 		}
 	    });
     };
     var render_timewire = function () {
 	$scope.start_date = new Date($scope.events[0].fields.start_date);
-	$scope.end_date = new Date($scope.events[$scope.events.length-1].fields.end_date);
+	$scope.end_date = new Date($scope.events[$scope.events.length-1].fields.start_date);
 
 	$scope.duration = $scope.end_date - $scope.start_date;
 
-	var timeline = document.getElementById('active_region');
-	$scope.timeline_width = timeline.offsetWidth;
+	var active_region = document.getElementById('active_region');
+	var timeline_segments =  document.getElementsByClassName('timeline'); //only one for now
+	_.each(timeline_segments, function (seg) {
+	    seg.width = active_region.width + "px";
+	    seg.left = active_region.offsetLeft + "px";
+	});
+	$scope.timeline_width = active_region.offsetWidth;
 	$scope.date_box_width = 35;
 	$scope.date_marker_width = 2;
 	$scope.day_marker_width = 1;
 	$scope.all_markers = get_date_markers();
 	var opts = {
-	    "timeline_height": timeline.offsetHeight,
 	    "box_width": $scope.timeline_width/10,
 	    "box_padding":$scope.timeline_width/260,
 	    "box_spacing": $scope.timeline_width/260,
@@ -273,15 +287,36 @@ TimeWire.controller('TimeLine', function ($scope, $http, $route, $routeParams, $
 	$scope.shown_events = [];
 	$scope.hidden_events = [];
 
+	$scope.index_to_layer = {
+	    0:1,
+	    1:0,
+	    2:2
+	};
 	_.each($scope.events, function (ev, index) {
 	    insert_event(ev, index, opts);
 	});
-    };
+	$scope.layer_sizes = {
+	    0:1,
+	    1:1,
+	    2:1
+	};
+	//resize_events();
 
+    };
+    var resize_events = function () {
+	_.each($scope.shown_events, function (ev) {
+	    var factor = $scope.layer_sizes[ev.layer];
+	    ev.box.width = ev.box.width*factor;
+	    ev.box.height =  ev.box.height*factor;
+	});
+    };
     $scope.add_topic = function() {
-	if (!in_array($scope.new_topic, $scope.topics)) {
-	    $scope.topics[$scope.topics.length] = $scope.new_topic;
-	    $location.path("/topics/" + $scope.topics.join(','));
+	if ($scope.new_topic === "") {
+	    return false;
+	}
+	if (!in_array($scope.new_topic, $rootScope.topics)) {
+	    $rootScope.topics[$rootScope.topics.length] = $scope.new_topic;
+	    $location.path("/topics/" + $rootScope.topics.join(','));
 	} else {
 	    $scope.topic_error = $scope.new_topic + " is already in Search Term";
 	    $scope.new_topic = "";
@@ -289,8 +324,8 @@ TimeWire.controller('TimeLine', function ($scope, $http, $route, $routeParams, $
 	return false;
     };
     $scope.del_topic = function(index) {
-	$scope.topics.remove(index);
-	$location.path("/topics/" + $scope.topics.join(','));
+	$rootScope.topics.remove(index);
+	$location.path("/topics/" + $rootScope.topics.join(','));
 	return false;
     };
 
@@ -305,12 +340,15 @@ TimeWire.controller('TimeLine', function ($scope, $http, $route, $routeParams, $
     var ele_height = undefined;
     var timeline = document.getElementById("timeline");
 
-
-    $scope.open_event = function ($event) {
+    $scope.stop_prop = function ($event) {
 	$event.stopPropagation();
-	return false;
+    };
+    $scope.open_event = function ($event, event_id) {
+	$event.stopPropagation();
+	$location.path("/topics/" + $rootScope.topics.join(',') + "/event/" + event_id);
     };
     $scope.start_scroll = function ($event) {
+	console.log($event);
 	$scope.start_pos = $event.pageX;
 	document.body.addEventListener("pointermove", $scope.scroll_move, false);
 	document.body.addEventListener("pointerup", $scope.scroll_end, false);
